@@ -136,6 +136,47 @@ void print_que_forward(Node** head_pp) {
     printf("\n");
 }
 
+void que_delete_requests_at_floor(Node** head_pp, int floor)
+{
+    if (*head_pp == NULL) return;
+    // Traverse list from the front
+    Node* current_node = *head_pp;
+    while (current_node != NULL)
+    {
+        if (current_node->floor == floor)
+        {
+            current_node = current_node->child_p;
+            que_delete_node(head_pp, current_node->parent_p);
+        }
+        else
+        {
+            current_node = current_node->child_p;
+        }
+    }
+}
+
+/**
+ * @ret: 1 if the que is empty, else 0
+ */
+int que_is_empty(Node** head_pp)
+{
+    return (head_pp == NULL) ? 1 : 0;
+}
+
+void que_is_orders_at_floor_in_dir(Node** head_pp, int floor, MotorDirection dir)
+{
+    if (*head_pp == NULL) return;
+    Node* current_node = *head_pp;
+    // Traverse list from the front
+    while (current_node != NULL)
+    {
+        if ((current_node->floor == floor) & (current_node->dir == dir))
+        {
+            return;
+        }
+        current_node = current_node->child_p;
+    }
+}
 
 MotorDirection trip_direction(int floor, ButtonType button) {
     int current_floor = elevio_floorSensor();
