@@ -19,6 +19,9 @@ elevator: $(OBJECTS)
 que_test : $(OBJECTDIR)/que.o $(OBJECTDIR)/que_test.o
 	$(CC) -o $(addprefix $(OBJECTDIR)/, $@) $(OBJECTDIR)/que.o $(OBJECTDIR)/que_test.o $(CFLAGS)
 
+timer_test : $(OBJECTDIR)/timer.o $(OBJECTDIR)/timer_test.o
+	$(CC) -o $(addprefix $(OBJECTDIR)/, $@) $(OBJECTDIR)/timer.o $(OBJECTDIR)/timer_test.o $(CFLAGS)
+
 $(OBJECTDIR)/%.o: $(SOURCEDIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) -o $@ -c $(CFLAGS) $<
