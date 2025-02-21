@@ -1,7 +1,9 @@
+#pragma once
 #include "que.h"
-#include "elevio.h"
+#include "driver/elevio.h"
 
 typedef enum {
+    UNDEFINED = -1,
     IDLE = 0,
     WAITING = 1,
     MOVING = 2,
@@ -13,15 +15,16 @@ typedef enum {
     CLOSED = 1,
 } DoorStates;
 
-typedef struct fsm {
+typedef struct {
     States state;
     MotorDirection dir;
     DoorStates door;
     int waiting;
-    Node* head;
+    Node** head;
+    int floor;
 } fsm;
 
-void fsm_init();
+void fsm_init(fsm* fsm);
 
 void fsm_take_orders(fsm* fsm); // Read buttons, add to que according to logic
 void fsm_execute_state_function(fsm* fsm); // Choose correct state function
