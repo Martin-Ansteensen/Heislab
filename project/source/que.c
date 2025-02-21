@@ -26,7 +26,7 @@ Node* que_get_tail_node_p(Node** head_pp)
     // The que is empty if head_pp points to NULL
     if (*head_pp == NULL) return *head_pp;
 
-    // Find the tail Node by locating the node_p without a child
+    // Find the tail Node by locating the Node without a child
     Node* tail_p = *head_pp;
     while (1)
     {
@@ -64,7 +64,7 @@ Node* que_add_node_back(Node** head_pp, int floor, MotorDirection dir)
 
 void que_delete_node(Node** head_pp, Node* node_p)
 {
-    // The que is empty, nothing to delete
+    // Can't delete a NULL pointer
     if (node_p == NULL) return;
 
     if (node_p->parent_p == NULL)
@@ -136,19 +136,26 @@ void print_que_forward(Node** head_pp) {
     printf("\n");
 }
 
-void que_delete_requests_for_floor(Node** head_pp, int floor)
+void que_delete_orders_for_floor(Node** head_pp, int floor)
 {
     if (*head_pp == NULL) return;
-    // Traverse list from the front
+    // Traverse list from head to tail
     Node* current_node = *head_pp;
     while (current_node != NULL)
     {
         if (current_node->floor == floor)
         {
-            if (current_node->child_p != NULL){
-                current_node = current_node->child_p;
+            if (current_node->child_p != NULL)
+            {
+                // We can't delete the current node straight away, because then
+                // we would not be able to further traverse the list. Therefore
+                // we move one node back and delet the node we came from
+                current_node = current_node->child_p;  
                 que_delete_node(head_pp, current_node->parent_p);
-            } else {
+            }
+            else
+            {
+                // The current node is the tail, no further checks needs to be made
                 que_delete_node(head_pp, current_node);
                 return;
             }
@@ -156,27 +163,26 @@ void que_delete_requests_for_floor(Node** head_pp, int floor)
         }
         else
         {
+            // Continue traversing the list
             current_node = current_node->child_p;
         }
     }
 }
 
-/**
- * @ret: 1 if the que is empty, else 0
- */
+
 int que_is_empty(Node** head_pp)
 {
     return (*head_pp == NULL) ? 1 : 0;
 }
 
-int que_is_orders_at_floor_in_dir(Node** head_pp, int floor, MotorDirection dir)
+int que_is_orders_for_floor_in_dir(Node** head_pp, int floor, MotorDirection dir)
 {
     if (*head_pp == NULL) return 0;
     Node* current_node = *head_pp;
     // Traverse list from the front
     while (current_node != NULL)
     {
-        if ((current_node->floor == floor) && (current_node->dir == dir || current_node->dir == DIRN_STOP))
+        if ((current_node->floor == floor) && (current_node->dir == dir))
         {
             return 1;
         }

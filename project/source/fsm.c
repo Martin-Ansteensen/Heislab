@@ -8,7 +8,7 @@
 
 
 void fsm_init(fsm* fsm) {
-    //If elevator is not on designated floor, it will move up until it reaches a floor
+    // If elevator is not on designated floor, it will move up until it reaches a floor
     elevio_motorDirection(DIRN_STOP);
     if(elevio_floorSensor() == -1)
     {
@@ -62,7 +62,7 @@ void fsm_expedite_orders_at_floor(fsm* fsm, int floor){
     fsm->waiting_to_close_door = 1;
     timer_start();
 
-    que_delete_requests_for_floor(fsm->head, fsm->floor);
+    que_delete_orders_for_floor(fsm->head, fsm->floor);
     
     elevio_buttonLamp(floor, BUTTON_CAB, 0);
     elevio_buttonLamp(floor, BUTTON_HALL_DOWN, 0);
@@ -121,21 +121,31 @@ void fsm_waiting(fsm* fsm){
 }
 
 void fsm_moving(fsm* fsm){
+
+    // We want to update the floor sensor and the fsm's floor everytime
+    // we pass a new floor
     if (elevio_floorSensor() != -1){
         fsm->floor = elevio_floorSensor();
         elevio_floorIndicator(fsm->floor);
     }
     
+    // We stop driving if there are no more orders in the direction
+    // we are driving
     if (elevio_floorSensor() != -1 &&
-    !que_is_orders_in_dir(fsm->head, fsm->floor, fsm->dir)){
+        !que_is_orders_in_dir(fsm->head, fsm->floor, fsm->dir)
+    ) {
         elevio_motorDirection(DIRN_STOP);
         fsm->state = WAITING;
         fsm_expedite_orders_at_floor(fsm, fsm->floor);  
     }
 
+    // We stop driving if we reached a floor where there is an order
+    // in the direction we are driving, or a order without direction
+    // (a order from inside the elevator)
     if (elevio_floorSensor() != -1 &&
-        que_is_orders_at_floor_in_dir(fsm->head, fsm->floor, fsm->dir)
-    ){
+        (que_is_orders_for_floor_in_dir(fsm->head, fsm->floor, fsm->dir) ||
+        que_is_orders_for_floor_in_dir(fsm->head, fsm->floor, DIRN_STOP))
+    ) {
         elevio_motorDirection(DIRN_STOP);
         fsm->state = WAITING;
         fsm_expedite_orders_at_floor(fsm, fsm->floor);
