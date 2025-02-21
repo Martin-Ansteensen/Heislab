@@ -136,7 +136,7 @@ void print_que_forward(Node** head_pp) {
     printf("\n");
 }
 
-void que_delete_requests_at_floor(Node** head_pp, int floor)
+void que_delete_requests_for_floor(Node** head_pp, int floor)
 {
     if (*head_pp == NULL) return;
     // Traverse list from the front
@@ -145,8 +145,14 @@ void que_delete_requests_at_floor(Node** head_pp, int floor)
     {
         if (current_node->floor == floor)
         {
-            current_node = current_node->child_p;
-            que_delete_node(head_pp, current_node->parent_p);
+            if (current_node->child_p != NULL){
+                current_node = current_node->child_p;
+                que_delete_node(head_pp, current_node->parent_p);
+            } else {
+                que_delete_node(head_pp, current_node);
+                return;
+            }
+
         }
         else
         {
@@ -160,22 +166,48 @@ void que_delete_requests_at_floor(Node** head_pp, int floor)
  */
 int que_is_empty(Node** head_pp)
 {
-    return (head_pp == NULL) ? 1 : 0;
+    return (*head_pp == NULL) ? 1 : 0;
 }
 
-void que_is_orders_at_floor_in_dir(Node** head_pp, int floor, MotorDirection dir)
+int que_is_orders_at_floor_in_dir(Node** head_pp, int floor, MotorDirection dir)
 {
-    if (*head_pp == NULL) return;
+    if (*head_pp == NULL) return 0;
     Node* current_node = *head_pp;
     // Traverse list from the front
     while (current_node != NULL)
     {
-        if ((current_node->floor == floor) & (current_node->dir == dir))
+        if ((current_node->floor == floor) && (current_node->dir == dir || current_node->dir == DIRN_STOP))
         {
-            return;
+            return 1;
         }
         current_node = current_node->child_p;
     }
+    return 0;
+}
+
+int que_is_orders_in_dir(Node** head_pp, int floor, MotorDirection dir)
+{
+    if (*head_pp == NULL) return 0;
+    Node* current_node = *head_pp;
+    // Traverse list from the front
+    while (current_node != NULL)
+    {
+        if (dir == DIRN_DOWN){
+            if (current_node->floor < floor) {
+                return 1;
+            }
+        } else if (dir == DIRN_UP) {
+            if (current_node->floor > floor) {
+                return 1;
+            }
+        } else {
+            if (current_node->floor == floor) {
+                return 1;
+            }
+        }
+        current_node = current_node->child_p;
+    }
+    return 0;
 }
 
 MotorDirection trip_direction(int floor, ButtonType button) {

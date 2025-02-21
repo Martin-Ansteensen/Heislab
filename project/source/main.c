@@ -14,10 +14,17 @@ int main(){
     fsm.state = UNDEFINED;
     fsm.dir = DIRN_STOP;
     fsm.door = CLOSED;
-    fsm.waiting = 0;
+    fsm.waiting_to_close_door = 0;
     fsm.head = &que_head;
     elevio_init();
     fsm_init(&fsm);
+    while (1) {
+        printf("s: %i \t, f: %i \t d:%i \t q:", fsm.state, fsm.floor, fsm.dir);
+        print_que_forward(fsm.head);
 
+
+        fsm_take_orders(&fsm);
+        fsm_execute_state_function(&fsm);
+    }
     return 0;
 }

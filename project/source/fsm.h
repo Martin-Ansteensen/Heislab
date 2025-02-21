@@ -19,7 +19,7 @@ typedef struct {
     States state;
     MotorDirection dir;
     DoorStates door;
-    int waiting;
+    int waiting_to_close_door; // 1 for waiting, 0 for not waiting
     Node** head;
     int floor;
 } fsm;
@@ -29,8 +29,9 @@ void fsm_init(fsm* fsm);
 void fsm_take_orders(fsm* fsm); // Read buttons, add to que according to logic
 void fsm_execute_state_function(fsm* fsm); // Choose correct state function
 
+void fsm_expedite_orders_at_floor(fsm* fsm, int floor);
+
 // The following functions are used to determine how to transition from the state
 void fsm_idle(fsm* fsm);
 void fsm_waiting(fsm* fsm);
 void fsm_moving(fsm* fsm);
-void fsm_reached_floor(fsm* fsm);
