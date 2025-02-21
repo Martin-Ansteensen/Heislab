@@ -1,7 +1,10 @@
-#include "fsm.h"
-#include "que.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "fsm.h"
+#include "que.h"
+#include "timer.h"
+
 
 
 void fsm_init(fsm* fsm) {
@@ -57,12 +60,13 @@ void fsm_expedite_orders_at_floor(fsm* fsm, int floor){
 
     elevio_doorOpenLamp(1);  // open door
     fsm->waiting_to_close_door = 1;
+    timer_start();
 
     que_delete_requests_for_floor(fsm->head, fsm->floor);
     
     elevio_buttonLamp(floor, BUTTON_CAB, 0);
     elevio_buttonLamp(floor, BUTTON_HALL_DOWN, 0);
-    elevio_buttonLamp(floor, BUTTON_HALL_DOWN, 0);
+    elevio_buttonLamp(floor, BUTTON_HALL_UP, 0);
 }
 
 void fsm_idle(fsm* fsm){
@@ -109,8 +113,7 @@ void fsm_waiting(fsm* fsm){
     else if(
         fsm->waiting_to_close_door  // we are waiting to close the door
     ){
-        // if (timer_get() >= 3) {
-        if (1){
+        if (timer_get() >= 0.5) {
             fsm->waiting_to_close_door = 0;
             elevio_doorOpenLamp(0);  // close door
         }
