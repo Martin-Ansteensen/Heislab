@@ -135,3 +135,17 @@ void print_que_forward(Node** head_pp) {
     }
     printf("\n");
 }
+
+
+MotorDirection trip_direction(int floor, ButtonType button) {
+    int current_floor = elevio_floorSensor();
+    int called_floor = elevio_callButton(floor,button);
+    
+    if(current_floor>called_floor) {
+        return DIRN_DOWN;
+    } else if (current_floor<called_floor) {
+        return DIRN_UP;
+    } else {
+        return DIRN_STOP;
+    }
+}
