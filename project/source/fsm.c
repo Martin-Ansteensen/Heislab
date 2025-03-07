@@ -84,8 +84,12 @@ void fsm_resting(fsm* fsm){
     }
     
     else if (
-        que_is_orders_in_dir(fsm->head, fsm->floor, DIRN_UP) &&  // there are orders above us
-        !fsm->door_open  // we are not waiting to close the door
+        (que_is_orders_in_dir(fsm->head, fsm->floor, DIRN_UP) &&  // there are orders above us
+        !fsm->door_open)  // we are not waiting to close the door
+        ||
+        (elevio_floorSensor() == -1 &&
+        fsm->dir == DIRN_DOWN &&
+        que_is_orders_in_dir(fsm->head, fsm->floor, DIRN_STOP))
     ) {
         // Start moving up
         fsm->state = MOVING;
@@ -94,8 +98,12 @@ void fsm_resting(fsm* fsm){
     }
     
     else if(
-        que_is_orders_in_dir(fsm->head, fsm->floor, DIRN_DOWN) &&  // there are orders below us
-        !fsm->door_open  // we are not waiting to close the door
+        (que_is_orders_in_dir(fsm->head, fsm->floor, DIRN_DOWN) &&  // there are orders below us
+        !fsm->door_open)  // we are not waiting to close the door
+        ||
+        (elevio_floorSensor() == -1 &&
+        fsm->dir == DIRN_UP &&
+        que_is_orders_in_dir(fsm->head, fsm->floor, DIRN_STOP))
     ) {
         // Start moving down
         fsm->state = MOVING;
