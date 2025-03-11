@@ -6,7 +6,6 @@
 #include "timer.h"
 
 
-
 void fsm_init(fsm* fsm) {
     // If elevator is not on designated floor, it will move up until it reaches a floor
     elevio_motorDirection(DIRN_STOP);
@@ -43,7 +42,7 @@ void fsm_take_orders(fsm* fsm) {
                     que_add_node_back(fsm->head, f, trip_dir);
                 } else if(b==BUTTON_CAB) {
                     MotorDirection trip_dir = DIRN_STOP;
-        elevio_stopLamp(elevio_stopButton());            que_add_node_back(fsm->head, f, trip_dir);
+                    que_add_node_back(fsm->head, f, trip_dir);
                 }
             }   
         }

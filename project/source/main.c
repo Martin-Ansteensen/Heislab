@@ -23,18 +23,20 @@ int main()
         printf("s: %i \t, f: %i \t d:%i \t q:", fsm.state, fsm.floor, fsm.dir);
         print_que_forward(fsm.head);
 
+        // If the stop button is pressed, we interrupt the normal operation of
+        // the fsm and act according to what is specified in the spec.
         elevio_stopLamp(elevio_stopButton());
         if(elevio_stopButton())
         {
-            que_delete(&que_head);
-            elevio_motorDirection(DIRN_STOP);
-            fsm.state = RESTING;
-            for(int i = 0; i<N_FLOORS; i++) {
+            que_delete(&que_head);  // Delete the que
+            elevio_motorDirection(DIRN_STOP);  // Stop the elevator
+            fsm.state = RESTING;  // The elevator is now at rest
+            for(int i = 0; i<N_FLOORS; i++) {  // Turn of all lights since we deleted all orders
                 elevio_buttonLamp(i, BUTTON_CAB, 0);
                 elevio_buttonLamp(i, BUTTON_HALL_DOWN, 0);
                 elevio_buttonLamp(i, BUTTON_HALL_UP, 0);
             }
-            if(elevio_floorSensor() !=-1) {
+            if(elevio_floorSensor() !=-1) {  // If we are at a floor we need to open the door and start a timer for 3s
                 timer_start();
                 elevio_doorOpenLamp(1);
                 fsm.door_open = 1;

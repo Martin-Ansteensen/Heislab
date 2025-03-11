@@ -2,10 +2,6 @@
 #include "timer.h"
 #include <stdlib.h>
 
-
-
-
-
 void timer_start() {
     gettimeofday(&start, NULL);
 }
